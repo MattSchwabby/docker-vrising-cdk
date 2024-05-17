@@ -1,0 +1,11 @@
+{
+  "GamePort": 9876,
+  "QueryPort": 9877,
+  "RconPort": 25575,
+  "PersistentDataBucket": "v-rising-persistent-data-store",
+  "ImageName": "vrising-ubuntu-image",
+  "EcrRepoUri": "708286026751.dkr.ecr.us-west-2.amazonaws.com/vrising-ubuntu-image",
+  "EcrRepoArn": "arn:aws:ecr:us-west-2:708286026751:repository/vrising-ubuntu-image",
+  "Region": "us-west-2",
+  "AccountId": "708286026751"
+}

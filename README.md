@@ -1,164 +1,162 @@
-<p align="center">
-  <a href="https://github.com/TrueOsiris/docker-vrising">
-    <img alt="Iroh" src="https://github.com/TrueOsiris/docker-vrising/blob/main/assets/docker-virising.png?raw=true" height="250">
-  </a>
-  <p  align="center">Dockerized V Rising dedicated server in an Ubuntu 22.04 container with Wine.</p>
-</p>
+# docker-vrising-cdk
 
-[![Docker Pulls](https://badgen.net/docker/pulls/trueosiris/vrising?icon=docker&label=pulls)](https://hub.docker.com/r/trueosiris/vrising/)
-[![Docker Stars](https://badgen.net/docker/stars/trueosiris/vrising?icon=docker&label=stars)](https://hub.docker.com/r/trueosiris/vrising/)
-[![Docker Image Size](https://badgen.net/docker/size/trueosiris/vrising?icon=docker&label=image%20size)](https://hub.docker.com/r/trueosiris/vrising/)
-![Github stars](https://badgen.net/github/stars/trueosiris/docker-vrising?icon=github&label=stars)
-![Github forks](https://badgen.net/github/forks/trueosiris/docker-vrising?icon=github&label=forks)
-![Github open issues](https://badgen.net/github/open-issues/TrueOsiris/docker-vrising)
-![Github closed issues](https://badgen.net/github/closed-issues/TrueOsiris/docker-vrising)
-![Github last-commit](https://img.shields.io/github/last-commit/TrueOsiris/docker-vrising)
+This package is a CDK application based on [trueosiris's Dockerized V Rising server](https://github.com/TrueOsiris/docker-vrising) that has been optimized for hosting in AWS Elastic Container Service (ECS) Fargate and written as an AWS Cloud Development Kit (CDK) application.
 
-## Updates
+In addition to hosting your Dedicated V Rising server as a Docker container in ECS, this package will also automatically backup and restore your V Rising save files in the event your server goes offline.
 
-### image 2024-05-13 ([trueosiris/vrising:2.1](https://hub.docker.com/layers/trueosiris/vrising/2.1/images/sha256-00639c82158711d868f41750aa43f605bd35f5b775725137ef3b0b10ba80b52e?context=repo) or [latest](https://hub.docker.com/layers/trueosiris/vrising/latest/images/sha256-00639c82158711d868f41750aa43f605bd35f5b775725137ef3b0b10ba80b52e?context=repo)) 
+[AWS CDK](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://aws.amazon.com/cdk/&ved=2ahUKEwjjraHJl5OGAxXaGDQIHf4eD1kQFnoECBUQAQ&usg=AOvVaw2tPZlF03QH3o_EKwTkN7cO) is an open source development kit that makes it very easy to model AWS resources as code, and automatically deploys and configures those resources for you using Cloud Formation. [ECS Fargate](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html&ved=2ahUKEwikmv3cp5OGAxXaDjQIHQvpCVAQFnoECAcQAQ&usg=AOvVaw25qOhg3iVUXaDcz4N6hF_G) is a serverless container hosting service. The benefit of building this package as a CDK application is that you can deploy all the necessary AWS infrastructure needed to host your Dockerized V Rising server in ECS Fargate with a single command, after setting up some prerequisites.
 
-- Merged with [pull52](https://github.com/TrueOsiris/docker-vrising/pull/52) from [Diyagi](https://github.com/diyagi).<br>
-  Previous container version can still be grabbed via [trueosiris/vrising:2.0](https://hub.docker.com/layers/trueosiris/vrising/2.0/images/sha256-b9142d6f653685c92e25745f48cd205a1ffc7ed4aedef19011b03ab2a03a33c6?context=repo)<br>
-  Main fixes are: clean shutdown & complete log to container log. Kudos!
-- Added date to the logfile name, so per server launch, a logfile will be created. For now, they will not be automatically cleaned up.
-- If you're experiencing [this issue](https://github.com/TrueOsiris/docker-vrising/issues/51) with "[476:488:20240511,134828.926:ERROR http_transport_win.cc:388] HTTP status 403" in the log, pull [trueosiris/vrising:display](https://hub.docker.com/layers/trueosiris/vrising/display/images/sha256-592b9ace78b7228c08134804fa94b0f47766bb9202d86048a0a4ded81f765cda?context=repo) which uses xvfb.
-- If you're experiencing [this issue](https://github.com/TrueOsiris/docker-vrising/issues/43) with "wine: Assertion failed at address 00007F79E2C9EA7C (thread 0094)" in the log, u might need the latest wine from winehq, therefore grab [trueosiris/vrising:winehq](https://hub.docker.com/layers/trueosiris/vrising/winehq/images/sha256-f7f662258b30d6250d16718aa008a95b868336c92fdd98e56fd39bbca5626f8c?context=repo)
+This application will deploy the bare minimum set of infrastructure needed to host a V Rising server in AWS, and since we're using ECS Fargate, we won't need to manage any actual servers and the costs of running the container fall within the AWS free tier. If you want to host a Dedicated/Private V Rising server for free, then you should use this package.
 
-### V-Rising 1.0 update
+## Prerequisites
 
-- The game is working perfectly with a new run of the container (from scratch). I'm on it with several buddies and <i>tested</i> for 3 hours.
-- When the server is passworded, joining via Steam seems <b>not</b> possible. Use the ingame server list to join.
-- Make sure `"ListOnSteam": true,` and `"ListOnEOS": true` are set in the ServerHostSettings.json in \persistentdata, so the server is visible in the serverlist
-- Launching the server can take up to 10 minutes, even on a fast system, certainly with an existing save. Below is a screenshot of the end of the docker log of a functioning server, at the time we are able to connect to it.
+To deploy this package to your AWS account, you'll need the following:
 
-## Environment variables
+1 - A free [Amazon Web Services](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html?refid=em_127222&p=free&c=hp&z=1) account (all of the infrastructure this package deploys falls within the AWS free tier).
 
+2 - [NPM](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.npmjs.com/&ved=2ahUKEwiZ9Ov0l5OGAxVzHjQIHQbxBnAQFnoECBkQAQ&usg=AOvVaw3X687KpYu1DK9666uZ55b8) installed on your local machine.
 
-| Variable   | Key                    | Description                                                                       |
-| ------------ | ------------------------ | ----------------------------------------------------------------------------------- |
-| TZ         | Europe/Brussels        | timezone for ntpdate                                                              |
-| SERVERNAME | published servername   | mandatory setting that overrules the ServerHostSettings.json entry                |
-| WORLDNAME  | optional worldname     | default = world1. No real need to alter this. saves will be in a subdir WORLDNAME |
-| GAMEPORT   | optional game udp port | to overrule Port in ServerHostSettings.json config                                |
-| QUERYPORT  | optional query port    | to overrule QueryPort in ServerHostSettings.json config                           |
+3 - The [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) installed on your local machine.
 
-## Ports
-
-
-| Exposed Container port | Type | Default |
-| ------------------------ | ------ | --------- |
-| 9876                   | UDP  | ✔️    |
-| 9877                   | UDP  | ✔️    |
-
-## Volumes
-
-
-| Volume             | Container path              | Description                             |
-| -------------------- | ----------------------------- | ----------------------------------------- |
-| steam install path | /mnt/vrising/server         | path to hold the dedicated server files |
-| world              | /mnt/vrising/persistentdata | path that holds the world files         |
-
-## Docker cli
-
-```bash
-docker run -d --name='vrising' \
---net='bridge' \
---restart=unless-stopped \
--e TZ="Europe/Paris" \
--e SERVERNAME="trueosiris-V" \
--v '/path/on/host/server':'/mnt/vrising/server':'rw' \
--v '/path/on/host/persistentdata':'/mnt/vrising/persistentdata':'rw' \
--p 9876:9876/udp \
--p 9877:9877/udp \
-'trueosiris/vrising'
+4 - AWS CDK installed on your local machine. After you've installed NPM, run:
+```
+npm install -g aws-cdk
 ```
 
-## docker-compose.yml
+5 - [Docker Engine](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://docs.docker.com/engine/install/&ved=2ahUKEwiaq6T1nZOGAxV3GjQIHRuVBrQQFnoECBEQAQ&usg=AOvVaw3oxUtu6GW_HNWz3ZCPMLU_) installed on your local machine.
 
-```yaml
-services:
-  vrising:
-    image: trueosiris/vrising
-    environment:
-      - TZ=Europe/Paris
-      - SERVERNAME=vrising-TrueOsiris
-    volumes:
-      - type: bind
-        source: /your/host/vrising/server
-        target: /mnt/vrising/server
-        bind:
-          create_host_path: true
-      - type: bind
-        source: /your/host/vrising/persistentdata
-        target: /mnt/vrising/persistentdata
-        bind:
-          create_host_path: true
-    ports:
-      - '9876:9876/udp'
-      - '9877:9877/udp'
-    restart: unless-stopped
-    network_mode: bridge
+After you've set up these prerequisites, pull down this package from Github.
+
+## Customizing Your V Rising Server
+
+Before you deploy your V Rising server, you'll need to customize a few things. 
+
+- `REQUIRED:` In the `src\ServerHostSettings.json` file that you downloaded with this repository, you'll want to configure your server's name and description.
+- `OPTIONAL:` If you want your server to be private, set the value of `Secure` to `true`, and you'll need to set the `Password` field.
+```
+src\ServerHostSettings.json
+{
+    "Name": "UPDATE YOUR SERVER NAME HERE",
+    "Description": "UPDATE YOUR SERVER DESCRIPTION HERE",
+    ...
+    "Password": "UPDATE YOUR SERVER'S PASSWORD HERE, OR LEAVE IT BLANK IF YOU WANT YOUR SERVER TO BE PUBLIC",
+    "Secure": Set to `true` or `false`, depending on whether you want your server to be password protected,
+    ...
+  }
+```
+- `REQUIRED:` In the `src\Dockerfile` file, modify the value of `ServerName` on line 7:
+```
+src\Dockerfile
+ENV ServerName='Set what you want your server's name to be here - this will be what it's listed by on the V Rising server browser'
 ```
 
-## Links
-
-- [V Rising Dedicated Server Instructions](https://github.com/StunlockStudios/vrising-dedicated-server-instructions)
-- [Dockerhub - Trueosiris/vrising](https://hub.docker.com/repository/docker/trueosiris/vrising)
-- [Github - trueosiris/vrising](https://github.com/TrueOsiris/docker-vrising)
-
-## RCON <small>- Optional</small>
-
-To enable RCON edit `ServerHostSettings.json` and paste following lines after `QueryPort`. To communicate using RCON protocal use the [RCON CLI](https://github.com/gorcon/rcon-cli) by gorcon.
-
-```json
+- `OPTIONAL:` If you want to manage your server with an Rcon client, then you'll want to modify the `Rcon` section at the bottom of the `ServerHostSettings.json` file.
+```
+src\ServerHostSettings.json
 "Rcon": {
-  "Enabled": true,
-  "Password": "docker",
-  "Port": 25575
-},
+      "Enabled": true,
+      "Port": 25575,
+      "Password": "RCON PASSWORD GOES HERE"
+    }
+```
+- `OPTIONAL:` If you want to modify any of the game's settings, you'll want to do so in the `GameHostSettings.json` file that you downloaded with this repository. There are some quality of life improvements you can make in these settings, such as setting `TeleportBoundItems` to `false`, but if you don't know enough about V Rising to know what these settings do, then you can leave them at their defaults.
+
+## Deploying Your V Rising Server
+
+After installing all of the prerequisites and setting your Server's name in `src\ServerHostSettings.json` and  `src\Dockerfile`, you'll want to build your Docker image and store it AWS Elastic Container Registry. While the CDK Application deploys all of the infrastructure you need to host your Docker container in AWS, it won't finish deploying unless there is an existing container for it to pull down during deployment.
+
+1 - Log in to your AWS account in the [AWS console](https://www.google.com/aclk?sa=l&ai=DChcSEwjsibukn5OGAxXxLa0GHWLjChIYABAAGgJwdg&gclid=Cj0KCQjw3ZayBhDRARIsAPWzx8plByjt4aFLlKfmarSSvpzQqTzR3HnLUxmIOCln4Il9UVRjlcXKtFoaAtUREALw_wcB&sig=AOD64_1E3eyUe2zzPl2B-jp1uKXobWgDMw&q&adurl&ved=2ahUKEwj9qrSkn5OGAxV0BDQIHYWgDMUQ0Qx6BAgIEAE).
+
+2 - Navigate to [Elastic Container Registry](console.aws.amazon.com/ecr).
+
+3 - Click `Create Repository`.
+![Create Repositry](assets/ecr.png)
+
+4 - Type whatever name you want for your repository in the `Repository name` field. Leave all the other settings alone and click `Create Repository`
+![Create Repository 2](assets/createrepo.png)
+
+5 - Next, you'll need to copy some of your Repository's information into the `src\config.json` file. All of this information can be found in the AWS console. The values you need to set are:
+
+`EcrRpoUri` - You can copy this value by clicking the boxes next to your Repository Name in the ECR console:
+![ECR Uri](assets/ECRUri.png)
+
+`EcrRepoArn` - This is the Amazon Resource Name (ARN) of your Elastic Cointainer Registry. To find this, select your Repository in the ECR console, click the `Actions` button, then click `Summary`. Your Registry's ARN will be listed in the right hand corner.
+![ECR Arn](assets/ARN1.png)
+![ECR Arn 2](assets/ARN2.png)
+
+`Region` - The AWS region you want to deploy your server in. By default, this package selects `us-west-2`. If you want to deploy it on the east coast, you could change this to `us-east-1`.
+
+`AccountId` - The Account ID of your AWS account. You can find this by clicking your username in the top right hand corner of the AWS console (alternatively, you can copy everything before the first `.` in your `EcrRepoUri`. This is your account number.)
+![AWS Console](assets/AWSConsole.png)
+
+Finally, your config.json should have these values customized:
+```
+src\config.json
+{
+  ...
+  "EcrRepoUri": "123456789.dkr.ecr.us-west-2.amazonaws.com",
+  "EcrRepoArn": "arn:aws:ecr:us-west-2:123456789:repository/YourElasticContainerRegistryName",
+  "Region": "us-west-2",
+  "AccountId": "123456789"
+}
 ```
 
-## Remarks
+You're ready to deploy your V Rising server. All of the following commands should be run from a terminal in the root directory of this package:
 
-- Server config files are in `/path/on/host/persistentdata/Settings`. Files in `/path/on/host/server/` are overwritten on Steam update. <br>
-  Priority of settings is
+1 - First, you need to configure your AWS CLI for local use - open a terminal and type `aws configure`. You'll need to copy in some credential information from your AWS account. If you're new to or unfamiliar with AWS, [follow the instructions in this guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html) (see the `Manually editing the credentials and config files` section).  
 
-  a. container variables
+2 - Next, you need to build your Docker image and upload it to ECR. The `Build-VRisingServerImage.ps1` or `BuildVRisingServerImage.sh` scripts included in this package will do this for you. Run one of those scripts after authenticating with the AWS CLI (you may run either depending on which shell you prefer - if you're on Windows, I recommend running `Build-VRisingServerImage.ps1`).
 
-  b. files in /persistentdata
+3 - After your Docker image is built and the script has uploaded it to ECR, deploy your CDK package by running `cdk deploy`.
 
-  c. files in /server. (and these are reset to defaults each new patch)
+## Connecting to Your V Rising Server
 
-  If there are no files in `/path/on/host/persistentdata/Settings` on container start, the default files will be copied there from the /server directory.<br>
-  Edit `ServerHostSettings.json` if you want to change the ports, descriptions etc.
-- Description can be changed in `/path/on/host/persistentdata/Settings/ServerHostSettings.json`. The server will have to be restarted after changes.
-- If you use different internal & external ports, you can only use direct connect. For example `-p 12345:6789/udp` container port 6789 as defined in ServerHostSettings.json, and exposed as 12345 will make your server invisible ~~, even if  `"ListOnMasterServer=true"`~~
-- Make sure `"ListOnSteam": true,` and `"ListOnEOS": true` are set in the ServerHostSettings.json in \persistentdata, so the server is visible in the serverlist.
-- If you want to see the server in the server list and want to use 27015-27016/UDP, you'll need to change the ports in the ServerHostSettings.json file to 27015 and 27016. Then expose these ports (below). Of course, forward these udp ports on your firewall from incoming wan to the ports on the internal ip of your dockerhost.
+Your V Rising server is now running in ECS. It may take some time for it to appear in the V Rising server browser. If you'd like to connect to the server directly, click the `Direct Connect` button in the V Rising server browser and type in your server's IP address and game port. To find your server's IP address: 
 
-  - Start the container & let the server install.
-  - Stop the container.
-  - Alter the ports in `/path/on/host/persistentdata/Settings/ServerHostSettings.json` to
-    ```
-     "Port": 27015,
-     "QueryPort": 27016,
-    ```
-  - On your firewall, port forward incoming wan udp ports 27015 and 27016 to the same udp ports on your dockerhost ip.
-  - Restart the container with these ports:
-    ```
-     -p 27015:27015/udp
-     -p 27016:27016/udp
-    ```
-- If you want to continue from your local game, stop the container, overwrite the persistentdata
-  contents with your local data, and relaunch the server.
+1 - Go to the [ECS Console](console.aws.amazon.com/ecs/v2/clusters).
 
-## Docker log
+2 - Click the `Cluster` that was created by the CDK application:
+![ECS Cluster](assets/ECSCluster.png)
 
-The log of a functional server in 1.0 should look like this:
+3 - Click `Tasks`, then click on the running task.
+![Tasks](assets/Tasks.png)
 
-![docker-log](https://timmer.ninja/images/vrising-dockerlog.png)
+4 - Your server's public IP address will be displayed on right-hand side of the `Configuration` window:
+![PublicIP](assets/PublicIP.png)
 
-## Credits
+## Save File Backup and Restore
 
-- All credits go to the awesome designers of [V-Rising](https://playvrising.com/)!
+This package includes a file named `backup.sh` in your Docker image which will regularly back up your V Rising save data to an S3 bucket created as part of the CDK application. In the event your server crashes or goes offline for some reason, the Docker image is built so that it will download any save files present in this S3 bucket once the server comes back online. In this section of the docker-vrising-cdk.ts file:
+```
+lib\docker-vrising-cdk-stack.ts
+healthCheck: {
+            command: ["sh", "-c", "ps -A | grep 'VRisingServer*' | grep -v grep"],
+            startPeriod: cdk.Duration.seconds(300), // Adjust as needed
+```
+I've configured Fargate to run a health check every 5 minutes to see if the V Rising Server executable is running in our container. If it isn't Fargate will automatically tear down our container and deploy a new one. Once our container is redeployed, it runs a command that will download any save files that are in this bucket so that your game is in the same state as it was before your server went offline.
+
+## What Infrastructure Does This Create?
+
+This CDK application creates the bare minimum amount of infrastructure you need to host a container in AWS. I'm using ECS Fargate for this, since you can host containers in Fargate without having to build and manage any underlying EC2 instances, which dramatically reduces costs. All of the infrastructure is defined in the `lib/docker-vrising-cdk-stack.ts` file.
+
+## OPTIONAL - Modifying the Default Port Settings
+
+- I don't recommend changing any of the port settings since this package comes with the default ones already configured. These default settings are required to show up in the V Rising server browser. But, if you do want to change the default port settings, then you'll need to make them in a couple of places:
+
+1 - Update the values of `Port` and `QueryPort` in the `ServerHostSettings.json` file (the value of `Port` will be the port number that your players are required to type in when direct connecting to your server.)
+```
+    "Port": 9876,
+    "QueryPort": 9877,
+```
+
+2 - Update the values of `GamePort` and `QueryPort` in `src\Dockerfile`. On lines 8 and 9:
+```
+ENV GamePort=9876
+ENV QueryPort=9877
+```
+
+3 - Finally, Update the vales of `"GamePort"` and `"QueryPort"` in `src\config.json`. On lines 2 and 3:
+```
+  "GamePort": 9876,
+  "QueryPort": 9877,
+```

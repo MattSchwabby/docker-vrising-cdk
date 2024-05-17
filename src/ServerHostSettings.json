@@ -1,0 +1,29 @@
+{
+    "Name": "My ECS V Rising Server",
+    "Description": "V Rising Server hosted in ECS",
+    "Port": 9876,
+    "QueryPort": 9877,
+    "MaxConnectedUsers": 40,
+    "MaxConnectedAdmins": 8,
+    "ServerFps": 30,
+    "SaveName": "VRisingWorldSave",
+    "Password": "",
+    "Secure": false,
+    "ListOnSteam": true,
+    "ListOnEOS": false,
+    "AutoSaveCount": 20,
+    "AutoSaveInterval": 120,
+    "CompressSaveFiles": true,
+    "GameSettingsPreset": "",
+    "GameDifficultyPreset": "",
+    "AdminOnlyDebugEvents": true,
+    "DisableDebugEvents": false,
+    "API": {
+      "Enabled": true
+    },
+    "Rcon": {
+      "Enabled": true,
+      "Port": 25575,
+      "Password": ""
+    }
+  }
