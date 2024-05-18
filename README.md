@@ -77,7 +77,7 @@ After installing all of the prerequisites and setting your Server's name in `src
 
 5 - Next, you'll need to copy some of your Repository's information into the `src\config.json` file. All of this information can be found in the AWS console. The values you need to set are:
 
-`EcrRpoUri` - You can copy this value by clicking the boxes next to your Repository Name in the ECR console:
+`EcrRepoUri` - You can copy this value by clicking the boxes next to your Repository Name in the ECR console:
 ![ECR Uri](assets/ECRUri.png)
 
 `EcrRepoArn` - This is the Amazon Resource Name (ARN) of your Elastic Cointainer Registry. To find this, select your Repository in the ECR console, click the `Actions` button, then click `Summary`. Your Registry's ARN will be listed in the right hand corner.
