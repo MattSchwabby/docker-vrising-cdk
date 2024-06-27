@@ -6,7 +6,7 @@ In addition to hosting your Dedicated V Rising server as a Docker container in E
 
 [AWS CDK](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://aws.amazon.com/cdk/&ved=2ahUKEwjjraHJl5OGAxXaGDQIHf4eD1kQFnoECBUQAQ&usg=AOvVaw2tPZlF03QH3o_EKwTkN7cO) is an open source development kit that makes it very easy to model AWS resources as code, and automatically deploys and configures those resources for you using Cloud Formation. [ECS Fargate](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html&ved=2ahUKEwikmv3cp5OGAxXaDjQIHQvpCVAQFnoECAcQAQ&usg=AOvVaw25qOhg3iVUXaDcz4N6hF_G) is a serverless container hosting service. The benefit of building this package as a CDK application is that you can deploy all the necessary AWS infrastructure needed to host your Dockerized V Rising server in ECS Fargate with a single command, after setting up some prerequisites.
 
-This application will deploy the bare minimum set of infrastructure needed to host a V Rising server in AWS, and since we're using ECS Fargate, we won't need to manage any actual servers and the costs of running the container fall within the AWS free tier. If you want to host a Dedicated/Private V Rising server for free, then you should use this package.
+This application will deploy the bare minimum set of infrastructure needed to host a V Rising server in AWS, and since we're using ECS Fargate, we won't need to manage any actual servers. This infrastructure will not fall within the AWS free tier.
 
 ## Prerequisites
 
